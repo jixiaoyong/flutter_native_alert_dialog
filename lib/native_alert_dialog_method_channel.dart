@@ -8,7 +8,7 @@ import 'native_alert_dialog_platform_interface.dart';
 class MethodChannelNativeAlertDialog extends NativeAlertDialogPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('native_alert_dialog');
+  final methodChannel = const MethodChannel('io.github.jixiaoyong.native_alert_dialog');
 
   @override
   Future<String?> getPlatformVersion() async {

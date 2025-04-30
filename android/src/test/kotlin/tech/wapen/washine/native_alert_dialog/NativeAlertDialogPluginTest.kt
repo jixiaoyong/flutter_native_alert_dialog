@@ -1,4 +1,4 @@
-package io.jixiaoyong.native_alert_dialog
+package io.github.jixiaoyong.native_alert_dialog
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel

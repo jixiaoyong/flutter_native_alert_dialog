@@ -1,4 +1,4 @@
-group = "io.jixiaoyong.native_alert_dialog"
+group = "io.github.jixiaoyong.native_alert_dialog"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "io.jixiaoyong.native_alert_dialog"
+    namespace = "io.github.jixiaoyong.native_alert_dialog"
 
     compileSdk = 34
 

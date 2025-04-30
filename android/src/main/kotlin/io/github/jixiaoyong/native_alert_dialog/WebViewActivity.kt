@@ -1,4 +1,4 @@
-package io.jixiaoyong.native_alert_dialog
+package io.github.jixiaoyong.native_alert_dialog
 
 import android.os.Bundle
 import android.webkit.WebView

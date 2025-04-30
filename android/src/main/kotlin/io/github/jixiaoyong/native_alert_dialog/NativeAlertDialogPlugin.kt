@@ -1,4 +1,4 @@
-package io.jixiaoyong.native_alert_dialog
+package io.github.jixiaoyong.native_alert_dialog
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -21,7 +21,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-import io.jixiaoyong.native_alert_dialog.R
+import io.github.jixiaoyong.native_alert_dialog.R
 
 /** NativeAlertDialogPlugin */
 class NativeAlertDialogPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
@@ -34,7 +34,7 @@ class NativeAlertDialogPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
     private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "native_alert_dialog")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "io.github.jixiaoyong.native_alert_dialog")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
         (context.applicationContext as Application).registerActivityLifecycleCallbacks(ActivityHolder)

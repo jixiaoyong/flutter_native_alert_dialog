@@ -38,7 +38,7 @@ flutter:
       ios:
         pluginClass: NativeAlertDialogPlugin
       android:
-        package: io.jixiaoyong.native_alert_dialog
+        package: io.github.jixiaoyong.native_alert_dialog
         pluginClass: NativeAlertDialogPlugin
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

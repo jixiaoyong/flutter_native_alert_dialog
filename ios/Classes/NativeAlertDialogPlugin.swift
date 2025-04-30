@@ -119,7 +119,7 @@ class WebViewController: UIViewController {
 public class NativeAlertDialogPlugin: NSObject, FlutterPlugin {
   private var channel: FlutterMethodChannel?
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "native_alert_dialog", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(name: "io.github.jixiaoyong.native_alert_dialog", binaryMessenger: registrar.messenger())
     let instance = NativeAlertDialogPlugin()
     instance.channel = channel
     registrar.addMethodCallDelegate(instance, channel: channel)
