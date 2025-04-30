@@ -63,4 +63,12 @@ class MethodChannelNativeAlertDialog extends NativeAlertDialogPlatform {
       'duration': duration,
     });
   }
+
+  @override
+  Future<void> openUrl({required String url, String? title}) async {
+    await methodChannel.invokeMethod<void>('openUrl', {
+      'url': url,
+      'title': title,
+    });
+  }
 }

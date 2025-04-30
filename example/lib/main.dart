@@ -148,6 +148,15 @@ class _MyAppState extends State<MyApp> {
                 },
                 child: const Text('显示 Toast'),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  _nativeAlertDialogPlugin.openUrl(
+                    url: 'https://www.baidu.com',
+                  );
+                },
+                child: const Text('打开网页'),
+              ),
             ],
           ),
         ),

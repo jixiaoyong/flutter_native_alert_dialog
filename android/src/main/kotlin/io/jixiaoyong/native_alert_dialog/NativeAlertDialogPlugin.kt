@@ -20,6 +20,8 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
+import io.jixiaoyong.native_alert_dialog.R
+
 /** NativeAlertDialogPlugin */
 class NativeAlertDialogPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     /// The MethodChannel that will the communication between Flutter and native Android
@@ -66,6 +68,20 @@ class NativeAlertDialogPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
 
                 mainHandler.post {
                     showToast(message, duration)
+                    result.success(null)
+                }
+            }
+
+            "openUrl" -> {
+                val url = call.argument<String>("url") ?: ""
+                val title = call.argument<String>("title")
+                if (activity == null) {
+                    result.error("NO_ACTIVITY", "Activity is not available", null)
+                    return
+                }
+
+                mainHandler.post {
+                    openUrl(url, title)
                     result.success(null)
                 }
             }
@@ -191,6 +207,26 @@ class NativeAlertDialogPlugin : FlutterPlugin, MethodCallHandler, ActivityAware 
         )
         toast.setGravity(Gravity.CENTER, 0, 0)
         toast.show()
+    }
+
+    private fun openUrl(url: String, title: String?) {
+        val currentActivity = activity ?: return
+        
+        try {
+            val intent = android.content.Intent(currentActivity, WebViewActivity::class.java)
+            intent.putExtra(WebViewActivity.EXTRA_URL, url)
+            intent.putExtra(WebViewActivity.EXTRA_TITLE, title)
+            currentActivity.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            currentActivity.runOnUiThread {
+                android.widget.Toast.makeText(
+                    currentActivity,
+                    "打开网页失败",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {

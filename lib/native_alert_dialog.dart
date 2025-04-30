@@ -76,4 +76,18 @@ class NativeAlertDialog {
       duration: duration,
     );
   }
+
+  /// 打开网页
+  /// 
+  /// [url] 要打开的网页地址
+  /// [title] 网页标题，如果为空则不显示标题栏
+  Future<void> openUrl({
+    required String url,
+    String? title,
+  }) async {
+    return await NativeAlertDialogPlatform.instance.openUrl(
+      url: url,
+      title: title,
+    );
+  }
 }

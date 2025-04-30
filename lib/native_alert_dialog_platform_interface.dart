@@ -44,4 +44,11 @@ abstract class NativeAlertDialogPlatform extends PlatformInterface {
   }) {
     throw UnimplementedError('showToast() has not been implemented.');
   }
+
+  Future<void> openUrl({
+    required String url,
+    String? title,
+  }) {
+    throw UnimplementedError('openUrl() has not been implemented.');
+  }
 }
