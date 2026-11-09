@@ -1,7 +1,7 @@
 name: native_alert_dialog
 description: "A new Flutter plugin project."
-version: 0.0.1
-homepage:
+version: 0.0.2
+homepage: "https://codeup.aliyun.com/66cc483237a6d8817228df99/flutter_plugins"
 
 environment:
   sdk: '>=2.19.6 <4.0.0'
