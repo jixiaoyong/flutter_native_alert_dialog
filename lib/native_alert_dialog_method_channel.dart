@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,7 +7,12 @@ import 'native_alert_dialog_platform_interface.dart';
 class MethodChannelNativeAlertDialog extends NativeAlertDialogPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('io.github.jixiaoyong.native_alert_dialog');
+  final methodChannel = const MethodChannel(
+    'io.github.jixiaoyong.native_alert_dialog',
+  );
+
+  // 所有实例使用同一通道，因此展示状态也必须共享。
+  static bool _dialogActive = false;
 
   @override
   Future<String?> getPlatformVersion() async {
@@ -23,9 +27,10 @@ class MethodChannelNativeAlertDialog extends NativeAlertDialogPlatform {
   /// [title] 对话框标题
   /// [desText] 纯文本描述内容
   /// [desSpans] 富文本描述内容
-  /// [cancelText] 取消按钮文本
+  /// [cancelText] 取消按钮文本,为空标识不显示取消按钮
   /// [confirmText] 确认按钮文本
   /// [onDesSpanTap] 富文本点击回调
+  /// [isDismissOnTouchOutside] 是否点击背景关闭弹窗
   ///
   /// 返回用户选择结果，true 表示确认，false 表示取消
   @override
@@ -33,27 +38,60 @@ class MethodChannelNativeAlertDialog extends NativeAlertDialogPlatform {
     required String title,
     String? desText,
     List<Map<String, dynamic>>? desSpans,
-    String cancelText = '取消',
+    String? cancelText,
     String confirmText = '确定',
+    TextAlign? desTextAlign,
     void Function(String key)? onDesSpanTap,
+    bool isDismissOnTouchOutside = false,
+    Color? themeColor,
   }) async {
-    if (onDesSpanTap != null) {
-      methodChannel.setMethodCallHandler((call) async {
-        if (call.method == 'onDesSpanTap') {
-          final key = call.arguments['key'] as String?;
-          if (key != null) onDesSpanTap(key);
+    if (_dialogActive) {
+      throw PlatformException(
+        code: 'busy',
+        message: 'A dialog is already being shown on this channel.',
+      );
+    }
+    if (desSpans != null) {
+      for (final span in desSpans) {
+        if (span['text'] is! String ||
+            (span['clickable'] != null && span['clickable'] is! bool) ||
+            (span['clickKey'] != null && span['clickKey'] is! String)) {
+          throw ArgumentError.value(
+            desSpans,
+            'desSpans',
+            'Invalid span fields',
+          );
         }
-      });
+      }
     }
     final args = <String, dynamic>{
       'title': title,
-      if (desText != null) 'desText': desText,
-      if (desSpans != null) 'desSpans': desSpans,
+      if (desText != null && (desText.isNotEmpty || desSpans == null))
+        'desText': desText,
+      if ((desText == null || desText.isEmpty) && desSpans != null)
+        'desSpans': desSpans,
       'cancelText': cancelText,
       'confirmText': confirmText,
+      if (desTextAlign != null) 'desTextAlign': desTextAlign.name,
+      'isDismissOnTouchOutside': isDismissOnTouchOutside,
+      // 使用 value 保持对 Flutter 3.0 的兼容，通道传递 32 位 ARGB。
+      // ignore: deprecated_member_use
+      if (themeColor != null) 'themeColor': themeColor.value,
     };
-    final result = await methodChannel.invokeMethod('showDialog', args);
-    return result;
+    _dialogActive = true;
+    try {
+      methodChannel.setMethodCallHandler((call) async {
+        if (call.method == 'onDesSpanTap') {
+          final arguments = call.arguments;
+          final key = arguments is Map ? arguments['key'] : null;
+          if (key is String) onDesSpanTap?.call(key);
+        }
+      });
+      return await methodChannel.invokeMethod<bool>('showDialog', args);
+    } finally {
+      methodChannel.setMethodCallHandler(null);
+      _dialogActive = false;
+    }
   }
 
   @override
@@ -70,5 +108,21 @@ class MethodChannelNativeAlertDialog extends NativeAlertDialogPlatform {
       'url': url,
       'title': title,
     });
+  }
+
+  @override
+  Future<void> showLoading({
+    String? message,
+    bool dismissOnTouchOutside = false,
+  }) async {
+    await methodChannel.invokeMethod<void>('showLoading', {
+      'message': message,
+      'dismissOnTouchOutside': dismissOnTouchOutside,
+    });
+  }
+
+  @override
+  Future<void> hideLoading() async {
+    await methodChannel.invokeMethod<void>('hideLoading');
   }
 }
